@@ -1,29 +1,27 @@
 package cn.edu.cqupt.nmid.homeworksystem.po;
 
 public class User {
-        private Integer id;// 用户id
-        private String userName;// 用户名
+        private String username;// 用户名
         private String password;// 用户密码
-        private String classNum;//班级
-        private String email;// 用户邮箱
+        private String classnum;//班级
+        private String email;// 主键
           public User() {
 
           }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
+    public User(String username, String password, String classnum, String email) {
+        this.username = username;
+        this.password = password;
+        this.classnum = classnum;
+        this.email = email;
     }
 
     public String getUserName() {
-        return userName;
+        return username;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUserName(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
@@ -34,12 +32,12 @@ public class User {
         this.password = password;
     }
 
-    public String  getClassNum() {
-        return classNum;
+    public String  getClassnum() {
+        return classnum;
     }
 
-    public void setClassNum(String classNum) {
-        this.classNum = classNum;
+    public void setClassnum(String classnum) {
+        this.classnum = classnum;
     }
 
     public String getEmail() {

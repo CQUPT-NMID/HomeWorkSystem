@@ -26,6 +26,7 @@ public class SwaggerConfig {
     @Bean
     public Docket docket(Environment environment){
         Profiles profiles = Profiles.of("dev");
+
         //2.通过environment.acceptsProfiles判断是否处于自己设定的环境
         boolean b = environment.acceptsProfiles(profiles);
         return new Docket(DocumentationType.SWAGGER_2)

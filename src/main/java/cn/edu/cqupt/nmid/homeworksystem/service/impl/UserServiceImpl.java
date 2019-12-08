@@ -25,17 +25,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findUserById(Integer id) {
-        return userDao.findUserById(id);
+    public User findUserByEmail(String email) {
+        return userDao.findUserByEmail(email);
     }
 
     @Override
-    public User saveUser() {
-       return userDao.saveUser();
+    public void saveUser(User user) {
+         userDao.saveUser(user);
     }
 
     @Override
-    public boolean isRegistered(String mail) {
-        return userDao.getUserCount(mail) > 0;
+    public boolean isRegistered(String email) {
+        return userDao.getUserCount(email) > 0;
     }
 }

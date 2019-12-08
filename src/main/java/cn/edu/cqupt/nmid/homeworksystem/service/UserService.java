@@ -6,9 +6,9 @@ public interface UserService {
 
      User login(String email, String password);
 
-    User findUserById(Integer id);
+    User findUserByEmail(String email);
 
-    User saveUser();
+    void saveUser(User user);
 
-    boolean isRegistered(String mail);
+    boolean isRegistered(String email);
 }

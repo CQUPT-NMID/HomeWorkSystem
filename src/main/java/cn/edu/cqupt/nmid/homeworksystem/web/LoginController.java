@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import sun.util.locale.provider.LocaleServiceProviderPool;
+
 
 import javax.servlet.http.HttpSession;
 
@@ -37,11 +37,10 @@ public class LoginController {
     @Autowired
     private MailService mailService;
 
-
     @ApiOperation("登陆")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "email", required = true, value = "用户邮箱"),
-            @ApiImplicitParam(name = "email", required = true, value = "用户密码")
+            @ApiImplicitParam(name = "password", required = true, value = "用户密码")
     })
     @PostMapping("/user/login")
     public String loginIn(@RequestParam String email, @RequestParam String password, HttpSession session) {
@@ -82,21 +81,21 @@ public class LoginController {
 
     @ApiOperation("发送验证码")
     @GetMapping("/user/register/sendCheckCode")
-    public String sendCheckCode(@RequestParam String mail, HttpSession session) {
+    public String sendCheckCode(@RequestParam String email, HttpSession session) {
         JSONObject returnData = new JSONObject();
-        ;
         ResultStatus status = null;
         try {
             //检查邮箱是否已经注册
-            if (userService.isRegistered(mail)) {
+            if (userService.isRegistered(email)) {
                 returnData.put("status", 201);
                 return returnData.toJSONString();
             }
             String checkcode = CheckCode.getCheckCode(5);
-            mailService.sendMail(new String[]{mail}, "尚课邮我验证码", "<h2>您好,您的注册验证码是" + checkcode + "</h2>");
+            mailService.sendMail(new String[]{email}, "尚课邮我验证码", "<h2>您好,您的注册验证码是" + checkcode + "</h2>");
             session.setMaxInactiveInterval(120);
             session.setAttribute("checkcode", checkcode);
-            session.setAttribute("usermail", mail);
+            session.setAttribute("usermail", email);
+            status = ResultStatus.SUCCESS;
         } catch (Exception e) {
             status = ResultStatus.SYSERROR;
         }
@@ -109,38 +108,42 @@ public class LoginController {
     @ApiImplicitParams({
             @ApiImplicitParam(name ="username",required = true),
             @ApiImplicitParam(name ="password",required = true),
-            @ApiImplicitParam(name ="classNum",required = true),
-            @ApiImplicitParam(name ="mail",required = true),
+            @ApiImplicitParam(name ="classnum",required = true),
+            @ApiImplicitParam(name ="email",required = true),
             @ApiImplicitParam(name ="checkcode",required = true),
     })
     @PostMapping("/user/register")
-    public String register(@RequestParam String username,
-                           @RequestParam String password,
-                           @RequestParam String classNum,
-                           @RequestParam String mail,
+    public String register(
                            @RequestParam String checkcode,
-                           @RequestParam HttpSession session) {
+                           @RequestParam String classnum,
+                           @RequestParam String email,
+                           @RequestParam String password,
+                           @RequestParam String username,
+                            HttpSession session) {
         JSONObject returnData = new JSONObject();
         ResultStatus status = null;
-        String message;
+        String message = "";
         try {
+            System.out.println(session.getAttribute("checkcode"));
             if (checkcode.equals(session.getAttribute("checkcode"))) {
-                User user = userService.saveUser();
-                if (user != null) {
-                    session.setAttribute("user", user);
-                    status = ResultStatus.SUCCESS;
-                }else {
-                    //其他情况导致数据库不能成功保存。
-                    status = ResultStatus.FAILED;
-                }
+                User user = new User(username, password, classnum, email);
+                userService.saveUser(user);
+                status = ResultStatus.SUCCESS;
+                message = "注册成功";
             } else {
+                message = "验证码错误";
                 status = ResultStatus.FAILED;
             }
         } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(e.getMessage());
             status = ResultStatus.SYSERROR;
+            message = "服务器故障";
+            logger.info("服务器遇到位置错误");
         }
         returnData.put("status", status.getCode());
         returnData.put("JSESSIONID", session.getId());
+        returnData.put("message",message);
         return returnData.toJSONString();
     }
 }
