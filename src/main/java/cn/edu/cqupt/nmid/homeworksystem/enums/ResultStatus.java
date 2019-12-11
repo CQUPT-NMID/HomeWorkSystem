@@ -10,6 +10,7 @@ public enum ResultStatus {
     SUCCESS(200,"成功"),
     FAILED(400,"失败"),
     SYSERROR(500,"错误");
+
     private Integer code;
     private String message;
 
