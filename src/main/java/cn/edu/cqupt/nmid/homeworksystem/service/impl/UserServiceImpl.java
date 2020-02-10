@@ -1,5 +1,6 @@
 package cn.edu.cqupt.nmid.homeworksystem.service.impl;
 
+
 import cn.edu.cqupt.nmid.homeworksystem.dao.UserDao;
 import cn.edu.cqupt.nmid.homeworksystem.po.User;
 import cn.edu.cqupt.nmid.homeworksystem.service.UserService;
@@ -21,9 +22,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User login(String email, String password) {
-        return userDao.login(email,password);
+        User user = new User();
+        user.setEmail(email);
+        user.setPassword(password);
+        return userDao.login(user);
     }
-
+/*
     @Override
     public User findUserByEmail(String email) {
         return userDao.findUserByEmail(email);
@@ -37,5 +41,5 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean isRegistered(String email) {
         return userDao.getUserCount(email) > 0;
-    }
+    }*/
 }

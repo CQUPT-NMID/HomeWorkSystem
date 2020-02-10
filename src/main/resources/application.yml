@@ -27,7 +27,7 @@ spring:
     url: jdbc:mysql://127.0.0.1:3306/homework?characterEncoding=utf8&useUnicode=true&useSSL=false&serverTimezone=UTC
     username: root
     password: 123456
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: com.mysql.jdbc.Driver
   mail:
     host: smtp.qq.com
     protocol: smtp
@@ -45,6 +45,14 @@ spring:
       max-request-size: 20MB
   profiles:
     active: dev
+config:
+  jwt:
+    # 加密密钥
+    secret: abcdefg1234567
+    # token有效时长
+    expire: 3600
+    # header 名称
+    header: token
 ---
 spring:
   profiles: dev
@@ -55,4 +63,4 @@ server:
 spring:
   profiles: pro
 server:
-  port: 80
+  port: 8081

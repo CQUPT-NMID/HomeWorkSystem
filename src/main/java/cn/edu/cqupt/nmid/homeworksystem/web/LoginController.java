@@ -1,10 +1,15 @@
+
 package cn.edu.cqupt.nmid.homeworksystem.web;
 
 import cn.edu.cqupt.nmid.homeworksystem.enums.ResultStatus;
+//import cn.edu.cqupt.nmid.homeworksystem.po.User;
+import cn.edu.cqupt.nmid.homeworksystem.enums.Status;
 import cn.edu.cqupt.nmid.homeworksystem.po.User;
 import cn.edu.cqupt.nmid.homeworksystem.service.UserService;
 import cn.edu.cqupt.nmid.homeworksystem.service.mail.MailService;
 import cn.edu.cqupt.nmid.homeworksystem.utils.CheckCode;
+import cn.edu.cqupt.nmid.homeworksystem.utils.JwtUtil;
+import cn.edu.cqupt.nmid.homeworksystem.utils.ResponseResult;
 import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -17,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 import javax.servlet.http.HttpSession;
+import java.util.HashMap;
 
 
 /**
@@ -29,7 +35,7 @@ import javax.servlet.http.HttpSession;
 @RestController
 public class LoginController {
 
-    public final Logger logger = LoggerFactory.getLogger(LoginController.class);
+    private final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
     @Autowired
     private UserService userService;
@@ -37,59 +43,44 @@ public class LoginController {
     @Autowired
     private MailService mailService;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
     @ApiOperation("登陆")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "email", required = true, value = "用户邮箱"),
             @ApiImplicitParam(name = "password", required = true, value = "用户密码")
     })
-    @PostMapping("/user/login")
-    public String loginIn(@RequestParam String email, @RequestParam String password, HttpSession session) {
-        JSONObject returnData = new JSONObject();
-        ResultStatus status = null;
-        try {
-            User user = userService.login(email, password);
+    @PostMapping("/login")
+    public ResponseResult loginIn(@RequestParam String email, @RequestParam String password) {
+          User user = userService.login(email, password);
             if (user == null) {
-                status = ResultStatus.FAILED;
+                return ResponseResult.failure(Status.FAULT_PASSWORD);
             } else {
-                status = ResultStatus.SUCCESS;
-                session.setAttribute("user", user);
+                String token = jwtUtil.createToken(user);
+                HashMap<String, Object> map = new HashMap<>();
+                map.put("token",token);
+                return ResponseResult.success(token);
             }
-        } catch (Exception e) {
-            logger.error("服务器在登陆方法出错");
-            status = ResultStatus.FAILED;
-        }
-        returnData.put("status", status.getCode());
-        returnData.put("JSESSIONID", session.getId());
-        return returnData.toJSONString();
     }
 
     @ApiOperation("注销")
-    @PostMapping("/user/loginOut")
-    public String loginOut(@RequestParam HttpSession session) {
-        JSONObject returnData = new JSONObject();
-        ResultStatus status = null;
-        try {
-            session.removeAttribute("user");
-            status = ResultStatus.SUCCESS;
-        } catch (Exception e) {
-            logger.error("服务器在注销方法出错");
-            status = ResultStatus.SYSERROR;
-        }
-        returnData.put("status", status.getCode());
-        return returnData.toJSONString();
+    @PostMapping("/loginOut")
+    public String loginOut() {
+        return null;
     }
 
     @ApiOperation("发送验证码")
-    @GetMapping("/user/register/sendCheckCode")
+    @GetMapping("register/sendCheckCode")
     public String sendCheckCode(@RequestParam String email, HttpSession session) {
         JSONObject returnData = new JSONObject();
         ResultStatus status = null;
         try {
             //检查邮箱是否已经注册
-            if (userService.isRegistered(email)) {
+/*            if (userService.isRegistered(email)) {
                 returnData.put("status", 201);
                 return returnData.toJSONString();
-            }
+            }*/
             String checkcode = CheckCode.getCheckCode(5);
             mailService.sendMail(new String[]{email}, "尚课邮我验证码", "<h2>您好,您的注册验证码是" + checkcode + "</h2>");
             session.setMaxInactiveInterval(120);
@@ -126,8 +117,8 @@ public class LoginController {
         try {
             System.out.println(session.getAttribute("checkcode"));
             if (checkcode.equals(session.getAttribute("checkcode"))) {
-                User user = new User(username, password, classnum, email);
-                userService.saveUser(user);
+       //         User user = new User(username, password, classnum, email);
+         //       userService.saveUser(user);
                 status = ResultStatus.SUCCESS;
                 message = "注册成功";
             } else {
