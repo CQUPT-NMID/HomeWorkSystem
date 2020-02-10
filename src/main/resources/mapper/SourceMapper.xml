@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.cqupt.nmid.homeworksystem.dao.SourceMapper">
+  <resultMap id="BaseResultMap" type="cn.edu.cqupt.nmid.homeworksystem.po.Source">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="subclass_id" jdbcType="INTEGER" property="subclassId" />
+    <result column="teacher_id" jdbcType="INTEGER" property="teacherId" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
+    <result column="publishtime" jdbcType="TIMESTAMP" property="publishtime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, subclass_id, teacher_id, url, publishtime
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from source
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from source
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="cn.edu.cqupt.nmid.homeworksystem.po.Source">
+    insert into source (id, subclass_id, teacher_id, 
+      url, publishtime)
+    values (#{id,jdbcType=INTEGER}, #{subclassId,jdbcType=INTEGER}, #{teacherId,jdbcType=INTEGER}, 
+      #{url,jdbcType=VARCHAR}, #{publishtime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.edu.cqupt.nmid.homeworksystem.po.Source">
+    insert into source
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="subclassId != null">
+        subclass_id,
+      </if>
+      <if test="teacherId != null">
+        teacher_id,
+      </if>
+      <if test="url != null">
+        url,
+      </if>
+      <if test="publishtime != null">
+        publishtime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="subclassId != null">
+        #{subclassId,jdbcType=INTEGER},
+      </if>
+      <if test="teacherId != null">
+        #{teacherId,jdbcType=INTEGER},
+      </if>
+      <if test="url != null">
+        #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="publishtime != null">
+        #{publishtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.edu.cqupt.nmid.homeworksystem.po.Source">
+    update source
+    <set>
+      <if test="subclassId != null">
+        subclass_id = #{subclassId,jdbcType=INTEGER},
+      </if>
+      <if test="teacherId != null">
+        teacher_id = #{teacherId,jdbcType=INTEGER},
+      </if>
+      <if test="url != null">
+        url = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="publishtime != null">
+        publishtime = #{publishtime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.edu.cqupt.nmid.homeworksystem.po.Source">
+    update source
+    set subclass_id = #{subclassId,jdbcType=INTEGER},
+      teacher_id = #{teacherId,jdbcType=INTEGER},
+      url = #{url,jdbcType=VARCHAR},
+      publishtime = #{publishtime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

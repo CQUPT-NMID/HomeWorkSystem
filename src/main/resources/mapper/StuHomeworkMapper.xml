@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.cqupt.nmid.homeworksystem.dao.StuHomeworkMapper">
+  <resultMap id="BaseResultMap" type="cn.edu.cqupt.nmid.homeworksystem.po.StuHomework">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="stu_id" jdbcType="INTEGER" property="stuId" />
+    <result column="homework_id" jdbcType="INTEGER" property="homeworkId" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="grade" jdbcType="INTEGER" property="grade" />
+    <result column="attachurl" jdbcType="VARCHAR" property="attachurl" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, stu_id, homework_id, status, grade, attachurl
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from stu_homework
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from stu_homework
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="cn.edu.cqupt.nmid.homeworksystem.po.StuHomework">
+    insert into stu_homework (id, stu_id, homework_id, 
+      status, grade, attachurl
+      )
+    values (#{id,jdbcType=INTEGER}, #{stuId,jdbcType=INTEGER}, #{homeworkId,jdbcType=INTEGER}, 
+      #{status,jdbcType=INTEGER}, #{grade,jdbcType=INTEGER}, #{attachurl,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="cn.edu.cqupt.nmid.homeworksystem.po.StuHomework">
+    insert into stu_homework
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="stuId != null">
+        stu_id,
+      </if>
+      <if test="homeworkId != null">
+        homework_id,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="grade != null">
+        grade,
+      </if>
+      <if test="attachurl != null">
+        attachurl,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="stuId != null">
+        #{stuId,jdbcType=INTEGER},
+      </if>
+      <if test="homeworkId != null">
+        #{homeworkId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="grade != null">
+        #{grade,jdbcType=INTEGER},
+      </if>
+      <if test="attachurl != null">
+        #{attachurl,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.edu.cqupt.nmid.homeworksystem.po.StuHomework">
+    update stu_homework
+    <set>
+      <if test="stuId != null">
+        stu_id = #{stuId,jdbcType=INTEGER},
+      </if>
+      <if test="homeworkId != null">
+        homework_id = #{homeworkId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="grade != null">
+        grade = #{grade,jdbcType=INTEGER},
+      </if>
+      <if test="attachurl != null">
+        attachurl = #{attachurl,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.edu.cqupt.nmid.homeworksystem.po.StuHomework">
+    update stu_homework
+    set stu_id = #{stuId,jdbcType=INTEGER},
+      homework_id = #{homeworkId,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      grade = #{grade,jdbcType=INTEGER},
+      attachurl = #{attachurl,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
