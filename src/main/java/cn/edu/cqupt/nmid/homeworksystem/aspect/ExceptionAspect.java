@@ -55,11 +55,7 @@ public class ExceptionAspect {
             logger.error(methodname +"发生异常");
             logger.error(e.getStatus().getMessage());
             return ResponseResult.failure(e.getStatus());
-        }catch (Exception e){
-            logger.error(methodname +"发生异常");
-            logger.error(e.getMessage());
-            return ResponseResult.failure(Status.SysError);
-        } catch (Throwable throwable) {
+        }catch (Throwable throwable) {
             throwable.printStackTrace();
             logger.error(methodname +"发生异常");
             logger.error(throwable.getMessage());

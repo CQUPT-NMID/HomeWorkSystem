@@ -1,11 +1,12 @@
 package cn.edu.cqupt.nmid.homeworksystem.po;
 
 public class Question {
+
     private Integer id;
 
     private String content;
 
-    private Integer stuId;
+    private Integer uid;
 
     private Integer subjectId;
 
@@ -31,12 +32,12 @@ public class Question {
         this.content = content == null ? null : content.trim();
     }
 
-    public Integer getStuId() {
-        return stuId;
+    public Integer getUid() {
+        return uid;
     }
 
-    public void setStuId(Integer stuId) {
-        this.stuId = stuId;
+    public void setUid(Integer uid) {
+        this.uid = uid;
     }
 
     public Integer getSubjectId() {

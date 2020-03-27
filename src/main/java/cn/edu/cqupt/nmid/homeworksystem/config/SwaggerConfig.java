@@ -36,7 +36,7 @@ public class SwaggerConfig {
     }
     //配置swagger-ui页面上的信息
     private ApiInfo apiInfo(){
-        Contact contact = new Contact("nmid大后端", "www.itcover.cn", "1172610139@qq.com");
+        Contact contact = new Contact("nmid大后端", "https://www.itrover.cn", "1172610139@qq.com");
         return new ApiInfo("HomeWrokSystem的后端", "用于测试","1.0",null,contact,"Apache 2.0", "http://www.apache.org/licenses/LICENSE-2.0",new ArrayList());
     }
 }

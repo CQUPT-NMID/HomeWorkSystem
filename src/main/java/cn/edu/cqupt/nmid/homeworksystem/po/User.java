@@ -1,5 +1,7 @@
 package cn.edu.cqupt.nmid.homeworksystem.po;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * 用户的公共属性
  */
@@ -38,6 +40,7 @@ public class User {
         this.username = username == null ? null : username.trim();
     }
 
+    @JsonIgnore
     public String getPassword() {
         return password;
     }

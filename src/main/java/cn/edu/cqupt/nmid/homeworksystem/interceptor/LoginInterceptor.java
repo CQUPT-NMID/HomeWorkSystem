@@ -3,8 +3,13 @@ package cn.edu.cqupt.nmid.homeworksystem.interceptor;
 import cn.edu.cqupt.nmid.homeworksystem.annotation.UserLogin;
 import cn.edu.cqupt.nmid.homeworksystem.enums.Status;
 import cn.edu.cqupt.nmid.homeworksystem.utils.JwtUtil;
+import cn.edu.cqupt.nmid.homeworksystem.utils.TokenUser;
+import com.auth0.jwt.JWT;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.SignatureException;
+import javafx.beans.property.ReadOnlyListProperty;
+import jdk.nashorn.internal.parser.Token;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,12 +50,15 @@ public class LoginInterceptor implements HandlerInterceptor {
         //1.方法上有注解，且为require(优先)
         //2.类上有注解，且为require
         boolean needLogin = false;
+        int role = 0;
         if (methodLoginAnn!=null){
             //方法上有注解
             needLogin = methodLoginAnn.required();
+            role = methodLoginAnn.role();
         }else if(classLoginAnn!=null){
             //类上有注解
             needLogin = classLoginAnn.required();
+            role = classLoginAnn.role();
         }
 
         Claims claims = null;
@@ -75,9 +83,18 @@ public class LoginInterceptor implements HandlerInterceptor {
             }catch (Exception e){
                 throw new SignatureException(jwtUtil.getHeader() + "失效，请重新登录。");
             }
+
+            TokenUser tokenUser = (TokenUser) claims.get(JwtUtil.USER);
+            //验证权限
+            int userRole = tokenUser.getRole();
+
+            if (userRole < role){
+                throw new JwtException("没有权限访问");
+            }
+
+            //向后传递用户信息
+            request.setAttribute(JwtUtil.USER,token);
         }
-        //向后传递用户信息
-        request.setAttribute("userid", claims.get("id"));
         return true;
     }
 

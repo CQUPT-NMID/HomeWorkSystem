@@ -1,9 +1,14 @@
 package cn.edu.cqupt.nmid.homeworksystem.service.impl;
 
 
+import cn.edu.cqupt.nmid.homeworksystem.dao.StudentDao;
+import cn.edu.cqupt.nmid.homeworksystem.dao.TeacherMapper;
 import cn.edu.cqupt.nmid.homeworksystem.dao.UserDao;
+import cn.edu.cqupt.nmid.homeworksystem.po.Teacher;
 import cn.edu.cqupt.nmid.homeworksystem.po.User;
+import cn.edu.cqupt.nmid.homeworksystem.po.model.RegisterUser;
 import cn.edu.cqupt.nmid.homeworksystem.service.UserService;
+import cn.edu.cqupt.nmid.homeworksystem.utils.USER_ROLE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,26 +25,43 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserDao userDao;
 
+    @Autowired
+    private StudentDao studentDao;
+
+    @Autowired
+    private TeacherMapper teacherMapper;
+
     @Override
     public User login(String email, String password) {
         User user = new User();
         user.setEmail(email);
         user.setPassword(password);
-        return userDao.login(user);
-    }
-/*
-    @Override
-    public User findUserByEmail(String email) {
-        return userDao.findUserByEmail(email);
+        if ((user = userDao.login(user)) != null) {
+            //有这个用户
+            if (user.getRole().equals(USER_ROLE.STUDENT)){
+                user = studentDao.queryByEmail(user.getEmail());
+            }else if (user.getRole().equals(USER_ROLE.TEACHER)){
+                user = teacherMapper.queryByEmail(user.getEmail());
+            }
+            return user;
+        }
+        return null;
     }
 
-    @Override
-    public void saveUser(User user) {
-         userDao.saveUser(user);
-    }
+
 
     @Override
     public boolean isRegistered(String email) {
-        return userDao.getUserCount(email) > 0;
-    }*/
+        return userDao.selectByEmail(email) > 0;
+    }
+
+    @Override
+    public void updatePassword(RegisterUser user) {
+        userDao.updatePassword(user);
+    }
+
+    @Override
+    public void register(RegisterUser user) {
+        userDao.saveUser(user);
+    }
 }

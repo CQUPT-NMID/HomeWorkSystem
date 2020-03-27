@@ -4,14 +4,13 @@
   <resultMap id="BaseResultMap" type="cn.edu.cqupt.nmid.homeworksystem.po.Teacher">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="tname" jdbcType="VARCHAR" property="tname" />
-    <result column="password" jdbcType="VARCHAR" property="password" />
     <result column="email" jdbcType="VARCHAR" property="email" />
     <result column="telephone" jdbcType="VARCHAR" property="telephone" />
     <result column="academy" jdbcType="VARCHAR" property="academy" />
     <result column="avaterurl" jdbcType="VARCHAR" property="avaterurl" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, tname, password, email, telephone, academy, avaterurl
+    id, tname, email, telephone, academy, avaterurl
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -24,10 +23,10 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="cn.edu.cqupt.nmid.homeworksystem.po.Teacher">
-    insert into teacher (id, tname, password, 
+    insert into teacher (id, tname,
       email, telephone, academy, 
       avaterurl)
-    values (#{id,jdbcType=INTEGER}, #{tname,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=INTEGER}, #{tname,jdbcType=VARCHAR},
       #{email,jdbcType=VARCHAR}, #{telephone,jdbcType=VARCHAR}, #{academy,jdbcType=VARCHAR}, 
       #{avaterurl,jdbcType=VARCHAR})
   </insert>
@@ -39,9 +38,6 @@
       </if>
       <if test="tname != null">
         tname,
-      </if>
-      <if test="password != null">
-        password,
       </if>
       <if test="email != null">
         email,
@@ -63,9 +59,6 @@
       <if test="tname != null">
         #{tname,jdbcType=VARCHAR},
       </if>
-      <if test="password != null">
-        #{password,jdbcType=VARCHAR},
-      </if>
       <if test="email != null">
         #{email,jdbcType=VARCHAR},
       </if>
@@ -86,9 +79,7 @@
       <if test="tname != null">
         tname = #{tname,jdbcType=VARCHAR},
       </if>
-      <if test="password != null">
-        password = #{password,jdbcType=VARCHAR},
-      </if>
+
       <if test="email != null">
         email = #{email,jdbcType=VARCHAR},
       </if>
@@ -107,11 +98,16 @@
   <update id="updateByPrimaryKey" parameterType="cn.edu.cqupt.nmid.homeworksystem.po.Teacher">
     update teacher
     set tname = #{tname,jdbcType=VARCHAR},
-      password = #{password,jdbcType=VARCHAR},
       email = #{email,jdbcType=VARCHAR},
       telephone = #{telephone,jdbcType=VARCHAR},
       academy = #{academy,jdbcType=VARCHAR},
       avaterurl = #{avaterurl,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <select id="queryByEmail" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from teacher
+    where email = #{email}
+  </select>
 </mapper>

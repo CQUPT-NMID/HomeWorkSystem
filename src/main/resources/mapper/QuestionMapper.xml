@@ -4,14 +4,14 @@
   <resultMap id="BaseResultMap" type="cn.edu.cqupt.nmid.homeworksystem.po.Question">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="content" jdbcType="VARCHAR" property="content" />
-    <result column="stu_id" jdbcType="INTEGER" property="stuId" />
+    <result column="u_id" jdbcType="INTEGER" property="uid" />
     <result column="subject_id" jdbcType="INTEGER" property="subjectId" />
     <result column="title" jdbcType="VARCHAR" property="title" />
     <result column="view" jdbcType="INTEGER" property="view" />
     <result column="answernum" jdbcType="INTEGER" property="answernum" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, content, stu_id, subject_id, title, view, answernum
+        id, content, u_id, subject_id, title, view, answernum
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -24,24 +24,21 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="cn.edu.cqupt.nmid.homeworksystem.po.Question">
-    insert into question (id, content, stu_id, 
+    insert into question (id, content, u_id,
       subject_id, title, view, 
       answernum)
-    values (#{id,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR}, #{stuId,jdbcType=INTEGER}, 
+    values (#{id,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR}, #{uid,jdbcType=INTEGER},
       #{subjectId,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{view,jdbcType=INTEGER}, 
       #{answernum,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="cn.edu.cqupt.nmid.homeworksystem.po.Question">
+  <insert id="insertSelective" parameterType="cn.edu.cqupt.nmid.homeworksystem.po.Question" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
     insert into question
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
       <if test="content != null">
         content,
       </if>
-      <if test="stuId != null">
-        stu_id,
+      <if test="uid != null">
+        u_id,
       </if>
       <if test="subjectId != null">
         subject_id,
@@ -57,14 +54,11 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=INTEGER},
-      </if>
       <if test="content != null">
         #{content,jdbcType=VARCHAR},
       </if>
-      <if test="stuId != null">
-        #{stuId,jdbcType=INTEGER},
+      <if test="uid != null">
+        #{uid,jdbcType=INTEGER},
       </if>
       <if test="subjectId != null">
         #{subjectId,jdbcType=INTEGER},
@@ -86,8 +80,8 @@
       <if test="content != null">
         content = #{content,jdbcType=VARCHAR},
       </if>
-      <if test="stuId != null">
-        stu_id = #{stuId,jdbcType=INTEGER},
+      <if test="uid != null">
+        u_id = #{uid,jdbcType=INTEGER},
       </if>
       <if test="subjectId != null">
         subject_id = #{subjectId,jdbcType=INTEGER},
@@ -107,11 +101,24 @@
   <update id="updateByPrimaryKey" parameterType="cn.edu.cqupt.nmid.homeworksystem.po.Question">
     update question
     set content = #{content,jdbcType=VARCHAR},
-      stu_id = #{stuId,jdbcType=INTEGER},
+      u_id = #{uid,jdbcType=INTEGER},
       subject_id = #{subjectId,jdbcType=INTEGER},
       title = #{title,jdbcType=VARCHAR},
       view = #{view,jdbcType=INTEGER},
       answernum = #{answernum,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <resultMap id="questionVo" type="cn.edu.cqupt.nmid.homeworksystem.po.vo.QuestionVo">
+    <id property="id" column="id"></id>
+    <result property="title" column="title"></result>
+    <result property="content" column="content"></result>
+    <result property="view" column="view"></result>
+    <result property="name" column="sname"></result>
+    <result property="answer" column="answernum"></result>
+  </resultMap>
+
+  <select id="listQuetionsBySubjectId" resultMap="questionVo">
+    select * from questionview where subject_id = #{subjectId};
+  </select>
 </mapper>

@@ -1,38 +1,41 @@
 
 package cn.edu.cqupt.nmid.homeworksystem.web;
-
 import cn.edu.cqupt.nmid.homeworksystem.enums.ResultStatus;
-//import cn.edu.cqupt.nmid.homeworksystem.po.User;
 import cn.edu.cqupt.nmid.homeworksystem.enums.Status;
 import cn.edu.cqupt.nmid.homeworksystem.po.User;
+import cn.edu.cqupt.nmid.homeworksystem.po.model.LoginUserModel;
+import cn.edu.cqupt.nmid.homeworksystem.po.model.RegisterUser;
 import cn.edu.cqupt.nmid.homeworksystem.service.UserService;
 import cn.edu.cqupt.nmid.homeworksystem.service.mail.MailService;
+import cn.edu.cqupt.nmid.homeworksystem.utils.CacheCheckCode;
 import cn.edu.cqupt.nmid.homeworksystem.utils.CheckCode;
 import cn.edu.cqupt.nmid.homeworksystem.utils.JwtUtil;
 import cn.edu.cqupt.nmid.homeworksystem.utils.ResponseResult;
 import com.alibaba.fastjson.JSONObject;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
+import net.bytebuddy.asm.Advice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
-import javax.servlet.http.HttpSession;
+import javax.xml.ws.Response;
 import java.util.HashMap;
 
 
 /**
  * @author MaYunHao
  * @version 1.0
- * @description
+ * @description  登陆业务相关
  * @date 2019/12/7 17:26
  */
 
 @RestController
+@Api(tags = "登陆 注册 修改密码相关")
 public class LoginController {
 
     private final Logger logger = LoggerFactory.getLogger(LoginController.class);
@@ -47,94 +50,89 @@ public class LoginController {
     private JwtUtil jwtUtil;
 
     @ApiOperation("登陆")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "email", required = true, value = "用户邮箱"),
-            @ApiImplicitParam(name = "password", required = true, value = "用户密码")
-    })
     @PostMapping("/login")
-    public ResponseResult loginIn(@RequestParam String email, @RequestParam String password) {
-          User user = userService.login(email, password);
+    public ResponseResult loginIn(@RequestBody @ApiParam(required = true) LoginUserModel loginUser) {
+
+        User user = userService.login(loginUser.getEmail(), loginUser.getPassword());
             if (user == null) {
                 return ResponseResult.failure(Status.FAULT_PASSWORD);
             } else {
                 String token = jwtUtil.createToken(user);
                 HashMap<String, Object> map = new HashMap<>();
+                //返回用户信息
+                map.put("user",user);
+                //返回token
                 map.put("token",token);
                 return ResponseResult.success(token);
             }
-    }
+}
 
-    @ApiOperation("注销")
-    @PostMapping("/loginOut")
-    public String loginOut() {
-        return null;
-    }
+//    @ApiOperation("注销")
+//    @PostMapping("/loginOut")
+//    public String loginOut() {
+//        return null;
+//    }
 
     @ApiOperation("发送验证码")
     @GetMapping("register/sendCheckCode")
-    public String sendCheckCode(@RequestParam String email, HttpSession session) {
-        JSONObject returnData = new JSONObject();
-        ResultStatus status = null;
+    public ResponseResult sendCheckCode(@RequestParam String email) {
         try {
             //检查邮箱是否已经注册
-/*            if (userService.isRegistered(email)) {
-                returnData.put("status", 201);
-                return returnData.toJSONString();
-            }*/
+            if (userService.isRegistered(email)) {
+                return ResponseResult.failure(Status.USER_EXIST);
+            }
+
             String checkcode = CheckCode.getCheckCode(5);
             mailService.sendMail(new String[]{email}, "尚课邮我验证码", "<h2>您好,您的注册验证码是" + checkcode + "</h2>");
-            session.setMaxInactiveInterval(120);
+
+            //暂时使用全局静态方法保存email,后期采取redis存储
+            CacheCheckCode.addCheckCode(email,checkcode);
+
+            //不使用session
+/*            session.setMaxInactiveInterval(120);
             session.setAttribute("checkcode", checkcode);
             session.setAttribute("usermail", email);
-            status = ResultStatus.SUCCESS;
+            */
+
+            logger.info("发送成功");
+            return ResponseResult.success(checkcode);
         } catch (Exception e) {
-            status = ResultStatus.SYSERROR;
+            logger.error(e.getMessage());
+            return ResponseResult.failure(Status.SysError);
         }
-        returnData.put("status", status.getCode());
-        returnData.put("JSESSIONID", session.getId());
-        return returnData.toJSONString();
     }
 
+    /**
+     * 需要修改,问题在与ui图需要修改
+     */
     @ApiOperation("注册")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name ="username",required = true),
-            @ApiImplicitParam(name ="password",required = true),
-            @ApiImplicitParam(name ="classnum",required = true),
-            @ApiImplicitParam(name ="email",required = true),
-            @ApiImplicitParam(name ="checkcode",required = true),
-    })
     @PostMapping("/user/register")
-    public String register(
-                           @RequestParam String checkcode,
-                           @RequestParam String classnum,
-                           @RequestParam String email,
-                           @RequestParam String password,
-                           @RequestParam String username,
-                            HttpSession session) {
-        JSONObject returnData = new JSONObject();
-        ResultStatus status = null;
-        String message = "";
-        try {
-            System.out.println(session.getAttribute("checkcode"));
-            if (checkcode.equals(session.getAttribute("checkcode"))) {
-       //         User user = new User(username, password, classnum, email);
-         //       userService.saveUser(user);
-                status = ResultStatus.SUCCESS;
-                message = "注册成功";
-            } else {
-                message = "验证码错误";
-                status = ResultStatus.FAILED;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println(e.getMessage());
-            status = ResultStatus.SYSERROR;
-            message = "服务器故障";
-            logger.info("服务器遇到位置错误");
+    public ResponseResult register(@RequestBody RegisterUser user) {
+        String code = CacheCheckCode.getCheckCode(user.getEmail());
+        if (code != null && code.equals(user.getCheckCode())){
+            userService.register(user);
+            logger.info("{} 注册成功",user.getEmail());
+            return ResponseResult.success();
+        } else {
+            return ResponseResult.failure("验证码错误");
         }
-        returnData.put("status", status.getCode());
-        returnData.put("JSESSIONID", session.getId());
-        returnData.put("message",message);
-        return returnData.toJSONString();
     }
+
+    @ApiOperation("更新密码")
+    @PostMapping("/updatePassword")
+    private ResponseEntity updatePassword(@RequestBody RegisterUser user){
+        HashMap<String, Object> map = new HashMap<>();
+        try {
+            String cacheCheckCode = CacheCheckCode.getCheckCode(user.getEmail());
+            if (!user.getCheckCode().equals(cacheCheckCode)){
+                //验证码错误
+                return ResponseEntity.badRequest().body("验证码错误");
+            }
+            userService.updatePassword(user);
+            return ResponseEntity.ok("SUCCESS");
+        }catch (Exception e){
+         return ResponseEntity.status(HttpStatus.valueOf(500)).build();
+        }
+    }
+
 }

@@ -26,6 +26,7 @@ public class JwtUtil {
 
     private String header;
 
+    public static final String USER="user";
     /**
      * 生成token
      * @param user 用户信息
@@ -36,10 +37,8 @@ public class JwtUtil {
         //过期时间
         Date expireDate = new Date(nowDate.getTime() + expire * 1000);
         HashMap<String, Object> map = new HashMap<>();
-        map.put("email",user.getEmail());
-        map.put("name",user.getUsername());
-        map.put("id",user.getId());
-        map.put("role",user.getRole());
+        TokenUser tokenUser = new TokenUser(user);
+        map.put(USER,tokenUser);
         return Jwts.builder()
                 .setHeaderParam("typ", "JWT")
                 .setClaims(map)
@@ -48,6 +47,7 @@ public class JwtUtil {
                 .signWith(SignatureAlgorithm.HS512, secret)
                 .compact();
     }
+
     /**
      * 获取token中注册信息
      * @param token
@@ -111,4 +111,5 @@ public class JwtUtil {
     public void setHeader(String header) {
         this.header = header;
     }
+
 }

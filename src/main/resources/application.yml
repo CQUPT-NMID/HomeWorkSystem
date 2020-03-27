@@ -32,7 +32,7 @@ spring:
     host: smtp.qq.com
     protocol: smtp
     username: 1172610139@qq.com
-    password: imgqpqvuxsitijje
+    password: fyumsvyehwcyiibf
     default-encoding: utf-8
     properties:
       mail:
@@ -45,6 +45,7 @@ spring:
       max-request-size: 20MB
   profiles:
     active: dev
+
 config:
   jwt:
     # 加密密钥
@@ -53,6 +54,11 @@ config:
     expire: 3600
     # header 名称
     header: token
+mybatis:
+  mapper-locations: classpath:/mapper/*.xml
+  type-aliases-package: classpath:/po
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 ---
 spring:
   profiles: dev

@@ -79,4 +79,21 @@
       user_id = #{userId,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <resultMap id="AnswerMap" type="cn.edu.cqupt.nmid.homeworksystem.po.model.AnswerModel">
+
+    <result property="name" column="unam"></result>
+    <result property="content" column="content"></result>
+    <result property="id" column="id"></result>
+    <result property="role" column="role"></result>
+    <result property="userId" column="user_id"></result>
+  </resultMap>
+
+  <select id="selectByQuestionId" resultMap="AnswerMap">
+
+    select *
+    from anserview where id = #{id};
+
+  </select>
+
 </mapper>
