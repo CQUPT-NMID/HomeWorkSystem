@@ -1,5 +1,6 @@
 package cn.edu.cqupt.nmid.homeworksystem.web;
 
+import cn.edu.cqupt.nmid.homeworksystem.annotation.UserLogin;
 import cn.edu.cqupt.nmid.homeworksystem.enums.QuestionType;
 import cn.edu.cqupt.nmid.homeworksystem.po.Answer;
 import cn.edu.cqupt.nmid.homeworksystem.po.Question;
@@ -12,6 +13,7 @@ import cn.edu.cqupt.nmid.homeworksystem.utils.TokenUser;
 import cn.edu.cqupt.nmid.homeworksystem.utils.TokenUserUtil;
 import cn.edu.cqupt.nmid.homeworksystem.utils.page.PageRequest;
 import cn.edu.cqupt.nmid.homeworksystem.utils.page.PageResult;
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
@@ -22,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -34,13 +37,11 @@ import java.util.List;
 @RestController
 @Api(tags = "论题空间")
 @RequestMapping("/discuss")
+@UserLogin(required = true)
 public class DiscussionController {
 
     @Autowired
     private DiscussionService discussionService;
-
-
-
 
     @ApiOperation("发布问题:不支持更新,请谨慎填写")
     @PostMapping("/ques")
@@ -65,7 +66,7 @@ public class DiscussionController {
                                         PageRequest page){
         PageHelper.startPage(page.getPageNum(),page.getPageSize());
         List<QuestionVo> list = discussionService.listQuetionsBySubjectId(id);
-        PageResult result = new PageResult((PageInfo) list);
+        PageResult result = new PageResult((Page) list);
         return ResponseResult.success(result);
     }
 
@@ -73,16 +74,47 @@ public class DiscussionController {
     @ApiOperation("通过问题id获取问题详情")
     @GetMapping("/ques/{id}")
     public ResponseResult getQuestion(@PathVariable Integer id){
-        Question question = discussionService.getQuestionById(id);
+        QuestionVo question = discussionService.getQuestionById(id);
         return ResponseResult.success(question);
     }
 
     //-----------------个人相关-----------------------
 
     //我的回答过的问题
-    //我的提问的问题
-    //我的足迹的问题
+    @ApiOperation("获取我的回答")
+    @GetMapping("/ques/getMyAnswer")
+    public ResponseResult getMyAnswer(@ApiParam(value = "学科id",required = false) Integer subjectId,
+                                      PageRequest pageRequest){
+        PageHelper.startPage(pageRequest.getPageNum(),pageRequest.getPageSize());
+        TokenUser user = TokenUserUtil.getTokenUser();
+        List<QuestionVo> list = discussionService.getMyAnswer(subjectId,user.getId());
+        PageResult result = new PageResult(list);
+        return ResponseResult.success(result);
+    }
 
+    //我的提问的问题
+    @ApiOperation("获取我的问题")
+    @GetMapping("/ques/getMyQuestion")
+    public ResponseResult getMyQuestion(@ApiParam(value = "学科id",required = false) Integer subjectId,
+                                        PageRequest pageRequest){
+        PageHelper.startPage(pageRequest.getPageNum(),pageRequest.getPageSize());
+        TokenUser user = TokenUserUtil.getTokenUser();
+        List<QuestionVo> list = discussionService.getMyQuestion(subjectId,user.getId());
+        PageResult result = new PageResult(list);
+        return ResponseResult.success(result);
+    }
+
+    //我的足迹的问题
+    @ApiOperation("获取我的足迹")
+    @GetMapping("/ques/getMyHistory")
+    public ResponseResult getMyHistory(@ApiParam(value = "学科id",required = false) Integer subjectId,
+                                        PageRequest pageRequest){
+        PageHelper.startPage(pageRequest.getPageNum(),pageRequest.getPageSize());
+        TokenUser user = TokenUserUtil.getTokenUser();
+        List<QuestionVo> list = discussionService.getMyHistory(subjectId,user.getId());
+        PageResult result = new PageResult(list);
+        return ResponseResult.success(result);
+    }
     //设计
     //  放到列表请求里
     // get 请求 不封装
@@ -94,7 +126,7 @@ public class DiscussionController {
     //mybatis 选择查询 which where
 
     //多条件查询,我的相关问题
-    //未完成
+
     @ApiOperation("获取与自己相关的问题")
     @GetMapping("/ques/history")
     public ResponseResult MyQuestion(@ApiParam(value = "学科id",required = false) Integer SubjectId,
@@ -105,10 +137,6 @@ public class DiscussionController {
         List<QuestionVo> list = discussionService.listQuestion(SubjectId,type,user.getId());
         return null;
     }
-
-
-
-
 
 
     //-----------------回答相关内容-----------------------

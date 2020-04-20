@@ -23,7 +23,4 @@ public enum  QuestionType {
     //我回答过的问题
     @ApiModelProperty(value = "我提出的问题")
     ANSWER_QUESTION;
-
-
-
 }

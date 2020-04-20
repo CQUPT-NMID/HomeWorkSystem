@@ -24,19 +24,16 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="cn.edu.cqupt.nmid.homeworksystem.po.Homewoks">
-    insert into homewoks (id, title, subclass_id, 
+    insert into homewoks (title, subclass_id,
       publishtime, deadline, info, 
       attachment)
-    values (#{id,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{subclassId,jdbcType=INTEGER}, 
+    values ( #{title,jdbcType=VARCHAR}, #{subclassId,jdbcType=INTEGER},
       #{publishtime,jdbcType=TIMESTAMP}, #{deadline,jdbcType=TIMESTAMP}, #{info,jdbcType=VARCHAR}, 
       #{attachment,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="cn.edu.cqupt.nmid.homeworksystem.po.Homewoks">
+  <insert id="insertSelective" parameterType="cn.edu.cqupt.nmid.homeworksystem.po.Homewoks" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
     insert into homewoks
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
       <if test="title != null">
         title,
       </if>
@@ -57,9 +54,6 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=INTEGER},
-      </if>
       <if test="title != null">
         #{title,jdbcType=VARCHAR},
       </if>
@@ -114,4 +108,10 @@
       attachment = #{attachment,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="listHomeWorksBySubjectId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"></include>
+    from homewo
+  </select>
 </mapper>

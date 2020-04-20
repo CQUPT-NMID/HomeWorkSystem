@@ -6,7 +6,6 @@ import cn.edu.cqupt.nmid.homeworksystem.enums.QuestionType;
 import cn.edu.cqupt.nmid.homeworksystem.po.Answer;
 import cn.edu.cqupt.nmid.homeworksystem.po.Question;
 import cn.edu.cqupt.nmid.homeworksystem.po.model.AnswerModel;
-import cn.edu.cqupt.nmid.homeworksystem.po.model.QuestionModel;
 import cn.edu.cqupt.nmid.homeworksystem.po.vo.QuestionVo;
 import cn.edu.cqupt.nmid.homeworksystem.service.DiscussionService;
 import cn.edu.cqupt.nmid.homeworksystem.utils.TokenUser;
@@ -44,8 +43,8 @@ public class DiscussionServiceImpl implements DiscussionService {
     }
 
     @Override
-    public Question getQuestionById(Integer id) {
-        Question question = questionMapper.selectByPrimaryKey(id);
+    public QuestionVo getQuestionById(Integer id) {
+        QuestionVo question = questionMapper.queryByQuestionId(id);
         return question;
     }
 
@@ -85,7 +84,30 @@ public class DiscussionServiceImpl implements DiscussionService {
 
     @Override
     public List<QuestionVo> listQuestion(Integer subjectId, QuestionType type, Integer id) {
-        return questionMapper.selectQuestion(subjectId,type,id);
+       List<QuestionVo> list = null;
+       switch (type){
+           case DEFAULT:list = questionMapper.listQuetionsBySubjectId(subjectId);break;
+           case MY_QUESTION:list = questionMapper.getMyQuestion(subjectId,id);break;
+           case ANSWER_QUESTION:list = questionMapper.getMyAnswer(subjectId,id);break;
+           case HISTORY:list = questionMapper.getMyHistory(subjectId,id);break;
+           default:break;
+       }
+       return list;
+    }
+
+    @Override
+    public List<QuestionVo> getMyQuestion(Integer subjectId, Integer id) {
+        return questionMapper.getMyQuestion(subjectId,id);
+    }
+
+    @Override
+    public List<QuestionVo> getMyAnswer(Integer subjectId, Integer id) {
+        return questionMapper.getMyAnswer(subjectId,id);
+    }
+
+    @Override
+    public List<QuestionVo> getMyHistory(Integer subjectId, Integer id) {
+        return questionMapper.getMyHistory(subjectId,id);
     }
 
 

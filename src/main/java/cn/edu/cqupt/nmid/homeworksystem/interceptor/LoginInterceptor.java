@@ -4,8 +4,11 @@ import cn.edu.cqupt.nmid.homeworksystem.annotation.UserLogin;
 import cn.edu.cqupt.nmid.homeworksystem.enums.Status;
 import cn.edu.cqupt.nmid.homeworksystem.utils.JwtUtil;
 import cn.edu.cqupt.nmid.homeworksystem.utils.TokenUser;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.auth0.jwt.JWT;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.SignatureException;
 import javafx.beans.property.ReadOnlyListProperty;
@@ -13,12 +16,15 @@ import jdk.nashorn.internal.parser.Token;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 /**
  * @author MaYunHao
@@ -26,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
  * @description 登陆校验
  * @date 2020/2/8 11:02
  */
+@Component
 public class LoginInterceptor implements HandlerInterceptor {
 
     private static final Logger logger = LoggerFactory.getLogger(LoginInterceptor.class);
@@ -37,7 +44,6 @@ public class LoginInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         //1.判断是否存在注解
         if(!(handler instanceof HandlerMethod)){
-            logger.info("不是HandlerMethod类型，则无需检查");
             return true;
         }
 
@@ -84,7 +90,8 @@ public class LoginInterceptor implements HandlerInterceptor {
                 throw new SignatureException(jwtUtil.getHeader() + "失效，请重新登录。");
             }
 
-            TokenUser tokenUser = (TokenUser) claims.get(JwtUtil.USER);
+            TokenUser tokenUser = JSON.parseObject(JSON.toJSONString(claims.get(JwtUtil.USER)),TokenUser.class);
+
             //验证权限
             int userRole = tokenUser.getRole();
 
@@ -93,7 +100,7 @@ public class LoginInterceptor implements HandlerInterceptor {
             }
 
             //向后传递用户信息
-            request.setAttribute(JwtUtil.USER,token);
+            request.setAttribute(JwtUtil.USER,tokenUser);
         }
         return true;
     }

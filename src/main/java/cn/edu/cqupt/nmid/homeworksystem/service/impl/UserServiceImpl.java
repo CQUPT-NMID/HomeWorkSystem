@@ -37,12 +37,7 @@ public class UserServiceImpl implements UserService {
         user.setEmail(email);
         user.setPassword(password);
         if ((user = userDao.login(user)) != null) {
-            //有这个用户
-            if (user.getRole().equals(USER_ROLE.STUDENT)){
-                user = studentDao.queryByEmail(user.getEmail());
-            }else if (user.getRole().equals(USER_ROLE.TEACHER)){
-                user = teacherMapper.queryByEmail(user.getEmail());
-            }
+            user = studentDao.queryByEmail(user.getEmail());
             return user;
         }
         return null;

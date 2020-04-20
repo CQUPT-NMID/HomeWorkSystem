@@ -1,5 +1,6 @@
 package cn.edu.cqupt.nmid.homeworksystem.utils.page;
 
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageInfo;
 
 import java.util.List;
@@ -39,6 +40,19 @@ public class PageResult {
         setPageSize(pageInfo.getPageSize());
         setTotalSize(pageInfo.getTotal());
         setContent(pageInfo.getList());
+    }
+
+    public PageResult(List list) {
+        Page pageInfo = null;
+        if (list instanceof Page) {
+            pageInfo = (Page) list;
+            setPageNum(pageInfo.getPageNum());
+            setPageSize(pageInfo.getPageSize());
+            setTotalSize(pageInfo.getTotal());
+            setContent(list);
+        }else{
+            System.out.println("报错");
+        }
     }
 
     public PageResult() {

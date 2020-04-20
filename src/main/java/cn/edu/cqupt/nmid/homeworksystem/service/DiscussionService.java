@@ -35,7 +35,7 @@ public interface DiscussionService {
      * 通过id 获取问题详情
      * @param id
      */
-    Question getQuestionById(Integer id);
+    QuestionVo getQuestionById(Integer id);
 
     /**
      * 回复问题
@@ -71,4 +71,28 @@ public interface DiscussionService {
      * @return
      */
     List<QuestionVo> listQuestion(Integer subjectId, QuestionType type, Integer id);
+
+    /**
+     * 获取我的提问
+     * @param subjectId
+     * @param id
+     * @return
+     */
+    List<QuestionVo> getMyQuestion(Integer subjectId, Integer id);
+
+    /**
+     * 获得我回答过的问题
+     * @param subjectId
+     * @param id
+     * @return
+     */
+    List<QuestionVo> getMyAnswer(Integer subjectId, Integer id);
+
+    /**
+     * 足迹
+     * @param subjectId
+     * @param id
+     * @return
+     */
+    List<QuestionVo> getMyHistory(Integer subjectId, Integer id);
 }

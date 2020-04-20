@@ -27,12 +27,19 @@ public interface QuestionMapper {
     List<QuestionVo> listQuetionsBySubjectId(Integer subjectId);
 
 
+
+
+    List<QuestionVo> getMyQuestion(Integer subjectId, Integer uid);
+
+    List<QuestionVo> getMyAnswer(Integer subjectId, Integer uid);
+
     /**
-     * 查询历史，未完成
+     * 获取历史
      * @param subjectId
-     * @param type
      * @param id
      * @return
      */
-    List<QuestionVo> selectQuestion(Integer subjectId, QuestionType type, Integer id);
+    List<QuestionVo> getMyHistory(Integer subjectId, Integer id);
+
+    QuestionVo queryByQuestionId(Integer id);
 }

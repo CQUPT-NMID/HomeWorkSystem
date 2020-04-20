@@ -3,7 +3,7 @@
 <mapper namespace="cn.edu.cqupt.nmid.homeworksystem.dao.UserDao">
 
     <select id="login" resultType="cn.edu.cqupt.nmid.homeworksystem.po.User">
-        select email,password,role from user;
+        select email,password,role from user where email = #{email} and password = #{password};
     </select>
 
     <select id="selectByEmail" resultType="java.lang.Integer">
@@ -16,5 +16,8 @@
         where email = #{email};
     </update>
 
+    <insert id="saveUser">
+        insert into homework.user (email,homework.user.password,homework.user.role) values(#{email},#{password},#{role});
+    </insert>
 
 </mapper>

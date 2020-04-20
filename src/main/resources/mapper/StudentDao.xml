@@ -4,7 +4,7 @@
 
     <resultMap type="cn.edu.cqupt.nmid.homeworksystem.po.Student" id="StudentMap">
         <result property="id" column="id" jdbcType="INTEGER"/>
-        <result property="sname" column="sname" jdbcType="VARCHAR"/>
+        <result property="username" column="unam" jdbcType="VARCHAR"/>
         <result property="password" column="password" jdbcType="VARCHAR"/>
         <result property="classnum" column="classnum" jdbcType="VARCHAR"/>
         <result property="email" column="email" jdbcType="VARCHAR"/>
@@ -13,42 +13,43 @@
         <result property="academy" column="academy" jdbcType="VARCHAR"/>
         <result property="telephote" column="telephote" jdbcType="VARCHAR"/>
         <result property="avatarurl" column="avatarurl" jdbcType="VARCHAR"/>
+        <result property="role" column="role"/>
     </resultMap>
 
     <!--查询单个-->
     <select id="queryById" resultMap="StudentMap">
         select
-          id, sname, password, classnum, email, snumber, age, academy, telephote, avatarurl
-        from homework.student
+          id, unam, password, classnum, email, snumber, age, academy, telephote, avatarurl,role
+        from homework.user
         where id = #{id}
     </select>
 
     <select id="queryByEmail" resultMap="StudentMap">
         select
-          id, sname, password, classnum, email, snumber, age, academy, telephote, avatarurl
-        from homework.student
+          id, unam, password, classnum, email, snumber, age, academy, telephote, avatarurl,role
+        from homework.user
         where email = #{email}
     </select>
 
     <!--查询指定行数据-->
     <select id="queryAllByLimit" resultMap="StudentMap">
         select
-          id, sname, password, classnum, email, snumber, age, academy, telephote, avatarurl
-        from homework.student
+          id, unam, password, classnum, email, snumber, age, academy, telephote, avatarurl,role
+        from homework.user
         limit #{offset}, #{limit}
     </select>
 
     <!--通过实体作为筛选条件查询-->
     <select id="queryAll" resultMap="StudentMap">
         select
-          id, sname, password, classnum, email, snumber, age, academy, telephote, avatarurl
-        from homework.student
+          id, unam, password, classnum, email, snumber, age, academy, telephote, avatarurl,role
+        from homework.user
         <where>
             <if test="id != null">
                 and id = #{id}
             </if>
-            <if test="sname != null and sname != ''">
-                and sname = #{sname}
+            <if test="username != null and username != ''">
+                and unam = #{username}
             </if>
             <if test="password != null and password != ''">
                 and password = #{password}
@@ -74,21 +75,24 @@
             <if test="avatarurl != null and avatarurl != ''">
                 and avatarurl = #{avatarurl}
             </if>
+            <if test="role != null">
+                and role = #{role}
+            </if>
         </where>
     </select>
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
-        insert into homework.student(sname, password, classnum, snumber, age, academy, telephote, avatarurl)
-        values (#{sname}, #{password}, #{classnum}, #{snumber}, #{age}, #{academy}, #{telephote}, #{avatarurl})
+        insert into homework.user(homework.user.unam, password, classnum, snumber, age, academy, telephote, avatarurl,homework.user.role)
+        values (#{username}, #{password}, #{classnum}, #{snumber}, #{age}, #{academy}, #{telephote}, #{avatarurl},#{role})
     </insert>
 
     <!--通过主键修改数据-->
     <update id="update">
-        update homework.student
+        update homework.user
         <set>
-            <if test="sname != null and sname != ''">
-                sname = #{sname},
+            <if test="username != null and username != ''">
+                unam = #{username},
             </if>
             <if test="password != null and password != ''">
                 password = #{password},
@@ -111,13 +115,16 @@
             <if test="avatarurl != null and avatarurl != ''">
                 avatarurl = #{avatarurl},
             </if>
+            <if test="role != null">
+                role = #{role}
+            </if>
         </set>
         where id = #{id}
     </update>
 
     <!--通过主键删除-->
     <delete id="deleteById">
-        delete from homework.student where id = #{id}
+        delete from homework.user where id = #{id}
     </delete>
 
 </mapper>

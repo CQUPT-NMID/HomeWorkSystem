@@ -1,20 +1,29 @@
 package cn.edu.cqupt.nmid.homeworksystem.po;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import java.util.Date;
 
 public class Homewoks {
+    @ApiModelProperty(value = "作业id",required = false,notes = "新增时不传，更新时传")
     private Integer id;
 
+    @ApiModelProperty(value = "作业标题",required = true)
     private String title;
 
+    @ApiModelProperty(value = "课程id",required = true)
     private Integer subclassId;
 
+    @ApiModelProperty(value ="发布时间",required = false,notes = "默认为当前时间")
     private Date publishtime;
 
+    @ApiModelProperty(value = "最后期限",required = true)
     private Date deadline;
 
+    @ApiModelProperty(value = "详细信息",required = true)
     private String info;
 
+    @ApiModelProperty(value = "附件",required = true)
     private String attachment;
 
     public Integer getId() {

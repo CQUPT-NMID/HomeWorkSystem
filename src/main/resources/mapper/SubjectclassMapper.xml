@@ -103,4 +103,11 @@
       classavater = #{classavater,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="getSubjectClass" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"></include>
+    from subjectclass;
+  </select>
+
 </mapper>

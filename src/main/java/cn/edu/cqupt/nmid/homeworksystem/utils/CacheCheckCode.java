@@ -1,7 +1,16 @@
 package cn.edu.cqupt.nmid.homeworksystem.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author MaYunHao
@@ -10,28 +19,41 @@ import java.util.List;
  * @date 2020/3/3 19:26
  */
 
+@Component
 public class CacheCheckCode {
 
-    private static HashMap<String,String> codes;
+    private final Logger logger = LoggerFactory.getLogger(CacheCheckCode.class);
 
-    static {
-        codes = new HashMap<>();
-    }
+    @Autowired
+    private RedisTemplate<String,String> redisTemplate;
 
-    public static void addCheckCode(String email,String code){
-        codes.put(email,code);
-    }
 
-    public static String getCheckCode(String email){
-        return codes.get(email);
+    /**
+     * 保存验证码
+     * @param email
+     * @param code
+     */
+    public void addCheckCode(String email,String code){
+        logger.info("保存验证码 {} : {}",email,code);
+        redisTemplate.opsForValue().set(email,code,3, TimeUnit.MINUTES);
     }
 
     /**
-     * 定时器任务，到点删除超过时间得验证码
+     * 获取验证码
+     * @param email
+     * @return
      */
-    public void removeTiming(){
-
+    public String getCheckCode(String email){
+        logger.info("获取验证码 {}",email);
+        String code = redisTemplate.opsForValue().get(email);
+        return code;
     }
+
+    public void deleteCheckCode(String email){
+        logger.info("删除验证码 {}",email);
+        redisTemplate.delete(email);
+    }
+
 
 
 }

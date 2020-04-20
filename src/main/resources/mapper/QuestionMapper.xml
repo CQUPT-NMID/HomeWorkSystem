@@ -118,7 +118,37 @@
     <result property="answer" column="answernum"></result>
   </resultMap>
 
+  <select id="queryByQuestionId" resultMap="questionVo">
+    select * from questionview where id = #{id};
+
+  </select>
+
   <select id="listQuetionsBySubjectId" resultMap="questionVo">
     select * from questionview where subject_id = #{subjectId};
   </select>
+
+  <select id="getMyQuestion" resultMap="questionVo">
+    select * from questionview where u_id = #{uid}
+    <if test="subjectId != null and subjectId != ''">
+      and subject_id = #{subjectId};
+    </if>
+  </select>
+
+  <select id="getMyAnswer" resultMap="questionVo">
+    select * from questionview where u_id = #{uid}
+                                 and id in (select question_id from homework.answer where u_id = #{uid})
+    <if test="subjectId != null and subjectId != ''">
+      and subject_id = #{subjectId};
+    </if>
+  </select>
+
+  <select id="getMyHistory" resultMap="questionVo">
+    select * from questionview where u_id = #{uid}
+                                 and id in (select question_id from homework.questionhistory
+                                 where questionview.u_id = #{uid})
+    <if test="subjectId != null and subjectId != ''">
+      and subject_id = #{subjectId};
+    </if>
+  </select>
+
 </mapper>

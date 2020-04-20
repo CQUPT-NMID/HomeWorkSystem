@@ -49,6 +49,9 @@ public class LoginController {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Autowired
+    private CacheCheckCode cacheCheckCode;
+
     @ApiOperation("登陆")
     @PostMapping("/login")
     public ResponseResult loginIn(@RequestBody @ApiParam(required = true) LoginUserModel loginUser) {
@@ -63,7 +66,7 @@ public class LoginController {
                 map.put("user",user);
                 //返回token
                 map.put("token",token);
-                return ResponseResult.success(token);
+                return ResponseResult.success(map);
             }
 }
 
@@ -85,8 +88,8 @@ public class LoginController {
             String checkcode = CheckCode.getCheckCode(5);
             mailService.sendMail(new String[]{email}, "尚课邮我验证码", "<h2>您好,您的注册验证码是" + checkcode + "</h2>");
 
-            //暂时使用全局静态方法保存email,后期采取redis存储
-            CacheCheckCode.addCheckCode(email,checkcode);
+            // redis 暂存验证码
+            cacheCheckCode.addCheckCode(email,checkcode);
 
             //不使用session
 /*            session.setMaxInactiveInterval(120);
@@ -108,7 +111,7 @@ public class LoginController {
     @ApiOperation("注册")
     @PostMapping("/user/register")
     public ResponseResult register(@RequestBody RegisterUser user) {
-        String code = CacheCheckCode.getCheckCode(user.getEmail());
+        String code = cacheCheckCode.getCheckCode(user.getEmail());
         if (code != null && code.equals(user.getCheckCode())){
             userService.register(user);
             logger.info("{} 注册成功",user.getEmail());
@@ -123,8 +126,8 @@ public class LoginController {
     private ResponseEntity updatePassword(@RequestBody RegisterUser user){
         HashMap<String, Object> map = new HashMap<>();
         try {
-            String cacheCheckCode = CacheCheckCode.getCheckCode(user.getEmail());
-            if (!user.getCheckCode().equals(cacheCheckCode)){
+            String code =  cacheCheckCode.getCheckCode(user.getEmail());
+            if (!user.getCheckCode().equals(code)){
                 //验证码错误
                 return ResponseEntity.badRequest().body("验证码错误");
             }
@@ -133,6 +136,6 @@ public class LoginController {
         }catch (Exception e){
          return ResponseEntity.status(HttpStatus.valueOf(500)).build();
         }
-    }
+}
 
 }

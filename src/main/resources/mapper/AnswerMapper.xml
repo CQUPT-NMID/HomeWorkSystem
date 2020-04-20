@@ -92,7 +92,7 @@
   <select id="selectByQuestionId" resultMap="AnswerMap">
 
     select *
-    from anserview where id = #{id};
+    from answerview where id = #{id};
 
   </select>
 
