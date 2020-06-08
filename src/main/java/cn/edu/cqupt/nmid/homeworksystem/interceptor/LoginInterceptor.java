@@ -90,6 +90,7 @@ public class LoginInterceptor implements HandlerInterceptor {
                 throw new SignatureException(jwtUtil.getHeader() + "失效，请重新登录。");
             }
 
+            //类型转换，jwt解析出来时linklistmap
             TokenUser tokenUser = JSON.parseObject(JSON.toJSONString(claims.get(JwtUtil.USER)),TokenUser.class);
 
             //验证权限

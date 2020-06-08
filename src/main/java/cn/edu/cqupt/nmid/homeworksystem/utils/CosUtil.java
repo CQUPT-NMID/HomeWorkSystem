@@ -35,7 +35,7 @@ public class CosUtil {
 
     private String url;
 
-    public COSClient getCOSClient(){
+    public COSClient getCOSClient() {
         COSCredentials cred = new BasicCOSCredentials(secretId, secretKey);
         // 2 设置 bucket 的区域, COS 地域的简称请参照 https://cloud.tencent.com/document/product/436/6224
         // clientConfig 中包含了设置 region, https(默认 http), 超时, 代理等 set 方法, 使用可参见源码或者常见问题 Java SDK 部分。
@@ -46,16 +46,25 @@ public class CosUtil {
         return cosClient;
     }
 
+    /**
+     *  上传图片到cos
+     *  根据文件的不同类型，上传到不同的文件夹内
+     *  后期更改分次上传，一次最多传1M的东西
+     *
+     * @param file
+     * @return
+     * @throws IOException
+     */
     public String upload(MultipartFile file) throws IOException {
         COSClient cosClient = getCOSClient();
         // 指定要上传到的存储桶
         // 指定要上传到 COS 上对象键
         Date time = new Date();
         //保存路径
-        String key = "files/"+time.getTime()+"_"+file.getOriginalFilename();
-        PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, key, file.getInputStream(),null);
+        String key = "files/" + time.getTime() + "_" + file.getOriginalFilename();
+        PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, key, file.getInputStream(), null);
         PutObjectResult putObjectResult = cosClient.putObject(putObjectRequest);
-        return url+key;
+        return url + key;
     }
 
     // --------------------- getter & setter ---------------------

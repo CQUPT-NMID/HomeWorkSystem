@@ -2,9 +2,11 @@ package cn.edu.cqupt.nmid.homeworksystem.service.impl;
 
 import cn.edu.cqupt.nmid.homeworksystem.dao.AnswerMapper;
 import cn.edu.cqupt.nmid.homeworksystem.dao.QuestionMapper;
+import cn.edu.cqupt.nmid.homeworksystem.dao.QuestionhistoryMapper;
 import cn.edu.cqupt.nmid.homeworksystem.enums.QuestionType;
 import cn.edu.cqupt.nmid.homeworksystem.po.Answer;
 import cn.edu.cqupt.nmid.homeworksystem.po.Question;
+import cn.edu.cqupt.nmid.homeworksystem.po.Questionhistory;
 import cn.edu.cqupt.nmid.homeworksystem.po.model.AnswerModel;
 import cn.edu.cqupt.nmid.homeworksystem.po.vo.QuestionVo;
 import cn.edu.cqupt.nmid.homeworksystem.service.DiscussionService;
@@ -30,6 +32,9 @@ public class DiscussionServiceImpl implements DiscussionService {
     @Autowired
     private AnswerMapper answerMapper;
 
+    @Autowired
+    private QuestionhistoryMapper questionhistoryMapper;
+
     @Override
     public Integer publishQuestion(Question question) {
         questionMapper.insertSelective(question);
@@ -47,6 +52,7 @@ public class DiscussionServiceImpl implements DiscussionService {
         QuestionVo question = questionMapper.queryByQuestionId(id);
         return question;
     }
+
 
     @Override
     public Integer publishAnswer(Answer answer) {
@@ -72,7 +78,7 @@ public class DiscussionServiceImpl implements DiscussionService {
             int size = models.size();
             for (int i = 0; i < size; i++) {
                 AnswerModel model = models.get(i);
-                if (model.getId()!= null && userId.equals(model.getId())){
+                if (model.getId()!= null && userId.equals(model.getUserId())){
                     model.setUpdateAble(true);
                 }else {
                     model.setUpdateAble(false);
@@ -85,6 +91,9 @@ public class DiscussionServiceImpl implements DiscussionService {
     @Override
     public List<QuestionVo> listQuestion(Integer subjectId, QuestionType type, Integer id) {
        List<QuestionVo> list = null;
+       if (type == null){
+           type = QuestionType.DEFAULT;
+       }
        switch (type){
            case DEFAULT:list = questionMapper.listQuetionsBySubjectId(subjectId);break;
            case MY_QUESTION:list = questionMapper.getMyQuestion(subjectId,id);break;
@@ -108,6 +117,12 @@ public class DiscussionServiceImpl implements DiscussionService {
     @Override
     public List<QuestionVo> getMyHistory(Integer subjectId, Integer id) {
         return questionMapper.getMyHistory(subjectId,id);
+    }
+
+    @Override
+    public Integer addHistory(Questionhistory questionhistory) {
+        int i = questionhistoryMapper.insert(questionhistory);
+        return i;
     }
 
 

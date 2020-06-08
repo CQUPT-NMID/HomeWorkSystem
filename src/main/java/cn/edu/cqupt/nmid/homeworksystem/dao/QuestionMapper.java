@@ -39,7 +39,7 @@ public interface QuestionMapper {
      * @param id
      * @return
      */
-    List<QuestionVo> getMyHistory(Integer subjectId, Integer id);
+    List<QuestionVo> getMyHistory(Integer subjectId, Integer uid);
 
     QuestionVo queryByQuestionId(Integer id);
 }

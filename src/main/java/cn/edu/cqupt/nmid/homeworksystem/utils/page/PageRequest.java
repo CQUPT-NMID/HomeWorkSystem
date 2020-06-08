@@ -19,8 +19,8 @@ public class PageRequest {
     /**
      * 每页数量 默认为1000
      */
-    @ApiModelProperty(value="每页大小",name="pageSize",example="1000",required = false)
-    private int pageSize = 1000;
+    @ApiModelProperty(value="每页大小",name="pageSize",example="50",required = false)
+    private int pageSize = 50;
 
     public int getPageNum() {
         return pageNum;

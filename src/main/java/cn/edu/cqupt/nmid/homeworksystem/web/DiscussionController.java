@@ -4,6 +4,7 @@ import cn.edu.cqupt.nmid.homeworksystem.annotation.UserLogin;
 import cn.edu.cqupt.nmid.homeworksystem.enums.QuestionType;
 import cn.edu.cqupt.nmid.homeworksystem.po.Answer;
 import cn.edu.cqupt.nmid.homeworksystem.po.Question;
+import cn.edu.cqupt.nmid.homeworksystem.po.Questionhistory;
 import cn.edu.cqupt.nmid.homeworksystem.po.model.AnswerModel;
 import cn.edu.cqupt.nmid.homeworksystem.po.model.QuestionModel;
 import cn.edu.cqupt.nmid.homeworksystem.po.vo.QuestionVo;
@@ -15,16 +16,13 @@ import cn.edu.cqupt.nmid.homeworksystem.utils.page.PageRequest;
 import cn.edu.cqupt.nmid.homeworksystem.utils.page.PageResult;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -36,7 +34,7 @@ import java.util.List;
 
 @RestController
 @Api(tags = "论题空间")
-@RequestMapping("/discuss")
+@RequestMapping("/api/discuss")
 @UserLogin(required = true)
 public class DiscussionController {
 
@@ -75,15 +73,34 @@ public class DiscussionController {
     @GetMapping("/ques/{id}")
     public ResponseResult getQuestion(@PathVariable Integer id){
         QuestionVo question = discussionService.getQuestionById(id);
+        //添加历史记录
+        TokenUser user = TokenUserUtil.getTokenUser();
+        Questionhistory questionhistory = new Questionhistory();
+        questionhistory.setPublishdate(new Date());
+        questionhistory.setQuestionId(id);
+        questionhistory.setuId(user.getId());
+        questionhistory.setAnswer(0);
+        questionhistory.setCollection(0);
+        discussionService.addHistory(questionhistory);
         return ResponseResult.success(question);
     }
+
+
 
     //-----------------个人相关-----------------------
 
     //我的回答过的问题
+
+    /**
+     * 存在bug
+     * @param subjectId
+     * @param pageRequest
+     * @return
+     */
     @ApiOperation("获取我的回答")
     @GetMapping("/ques/getMyAnswer")
-    public ResponseResult getMyAnswer(@ApiParam(value = "学科id",required = false) Integer subjectId,
+    public ResponseResult getMyAnswer(@ApiParam(value = "学科id",required = false)
+            @RequestParam(required = false) Integer subjectId,
                                       PageRequest pageRequest){
         PageHelper.startPage(pageRequest.getPageNum(),pageRequest.getPageSize());
         TokenUser user = TokenUserUtil.getTokenUser();
@@ -95,7 +112,7 @@ public class DiscussionController {
     //我的提问的问题
     @ApiOperation("获取我的问题")
     @GetMapping("/ques/getMyQuestion")
-    public ResponseResult getMyQuestion(@ApiParam(value = "学科id",required = false) Integer subjectId,
+    public ResponseResult getMyQuestion(@ApiParam(value = "学科id",required = false)@RequestParam(required = false) Integer subjectId,
                                         PageRequest pageRequest){
         PageHelper.startPage(pageRequest.getPageNum(),pageRequest.getPageSize());
         TokenUser user = TokenUserUtil.getTokenUser();
@@ -107,7 +124,7 @@ public class DiscussionController {
     //我的足迹的问题
     @ApiOperation("获取我的足迹")
     @GetMapping("/ques/getMyHistory")
-    public ResponseResult getMyHistory(@ApiParam(value = "学科id",required = false) Integer subjectId,
+    public ResponseResult getMyHistory(@ApiParam(value = "学科id",required = false) @RequestParam(required = false) Integer subjectId,
                                         PageRequest pageRequest){
         PageHelper.startPage(pageRequest.getPageNum(),pageRequest.getPageSize());
         TokenUser user = TokenUserUtil.getTokenUser();
@@ -127,15 +144,16 @@ public class DiscussionController {
 
     //多条件查询,我的相关问题
 
-    @ApiOperation("获取与自己相关的问题")
+    @ApiOperation("获取与自己相关的问题:DEFAULT查询所有，HISTORY查询历史，MY_QUESTION我的问题，ANSWER_QUESTION回答的问题")
     @GetMapping("/ques/history")
-    public ResponseResult MyQuestion(@ApiParam(value = "学科id",required = false) Integer SubjectId,
-                                     @ApiParam(value = "问题类型",required = false)QuestionType type,
+    public ResponseResult MyQuestion(@ApiParam(value = "学科id",required = false) @RequestParam(required = false) Integer SubjectId,
+                                     @ApiParam(value = "问题类型",required = false) @RequestParam(required = false) QuestionType type,
                                      PageRequest pageRequest){
         TokenUser user = TokenUserUtil.getTokenUser();
         PageHelper.startPage(pageRequest.getPageNum(),pageRequest.getPageSize());
         List<QuestionVo> list = discussionService.listQuestion(SubjectId,type,user.getId());
-        return null;
+        PageResult result = new PageResult(list);
+        return ResponseResult.success(result);
     }
 
 

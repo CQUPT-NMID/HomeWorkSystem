@@ -22,7 +22,7 @@ import java.util.List;
  */
 @RestController
 @Api(tags = "资源畅吧和作业")
-@RequestMapping("/source")
+@RequestMapping("/api/source")
 public class SourceController {
 
 

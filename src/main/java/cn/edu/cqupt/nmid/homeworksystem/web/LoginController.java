@@ -17,6 +17,7 @@ import net.bytebuddy.asm.Advice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +37,7 @@ import java.util.HashMap;
 
 @RestController
 @Api(tags = "登陆 注册 修改密码相关")
+@RequestMapping("/api")
 public class LoginController {
 
     private final Logger logger = LoggerFactory.getLogger(LoginController.class);
@@ -51,6 +53,7 @@ public class LoginController {
 
     @Autowired
     private CacheCheckCode cacheCheckCode;
+
 
     @ApiOperation("登陆")
     @PostMapping("/login")
@@ -90,7 +93,6 @@ public class LoginController {
 
             // redis 暂存验证码
             cacheCheckCode.addCheckCode(email,checkcode);
-
             //不使用session
 /*            session.setMaxInactiveInterval(120);
             session.setAttribute("checkcode", checkcode);

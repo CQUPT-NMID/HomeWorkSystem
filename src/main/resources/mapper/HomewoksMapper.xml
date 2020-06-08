@@ -112,6 +112,6 @@
   <select id="listHomeWorksBySubjectId" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List"></include>
-    from homewo
+    from homewoks
   </select>
 </mapper>

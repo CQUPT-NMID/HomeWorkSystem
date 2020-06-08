@@ -36,7 +36,7 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .groupName("main")
-                .globalOperationParameters(setHeaderToken())
+                .globalOperationParameters(setHeaderToken()) // 添加全局的token验证
                 .enable(b);
     }
     //配置swagger-ui页面上的信息

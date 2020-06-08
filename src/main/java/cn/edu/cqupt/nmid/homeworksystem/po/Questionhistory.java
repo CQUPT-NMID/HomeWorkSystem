@@ -3,15 +3,35 @@ package cn.edu.cqupt.nmid.homeworksystem.po;
 import java.util.Date;
 
 public class Questionhistory {
+    /*
+    问题历史id
+     */
     private Integer id;
 
-    private Integer stuId;
+    /**
+     * 用户id
+     */
+    private Integer uId;
 
+    /**
+     * 问题id
+     */
     private Integer questionId;
 
+    /**
+     * 发布时间
+     */
     private Date publishdate;
 
-    private Integer status;
+    /**
+     * 收藏
+     */
+    private Integer collection;
+
+    /**
+     * 回答
+     */
+    private Integer answer;
 
     public Integer getId() {
         return id;
@@ -21,12 +41,12 @@ public class Questionhistory {
         this.id = id;
     }
 
-    public Integer getStuId() {
-        return stuId;
+    public Integer getuId() {
+        return uId;
     }
 
-    public void setStuId(Integer stuId) {
-        this.stuId = stuId;
+    public void setuId(Integer uId) {
+        this.uId = uId;
     }
 
     public Integer getQuestionId() {
@@ -45,11 +65,19 @@ public class Questionhistory {
         this.publishdate = publishdate;
     }
 
-    public Integer getStatus() {
-        return status;
+    public Integer getCollection() {
+        return collection;
     }
 
-    public void setStatus(Integer status) {
-        this.status = status;
+    public void setCollection(Integer collection) {
+        this.collection = collection;
+    }
+
+    public Integer getAnswer() {
+        return answer;
+    }
+
+    public void setAnswer(Integer answer) {
+        this.answer = answer;
     }
 }

@@ -35,6 +35,11 @@ public class CacheCheckCode {
      */
     public void addCheckCode(String email,String code){
         logger.info("保存验证码 {} : {}",email,code);
+        String checkCode = getCheckCode(email);
+        if (checkCode != null){
+            //删除以前的
+            redisTemplate.delete(email);
+        }
         redisTemplate.opsForValue().set(email,code,3, TimeUnit.MINUTES);
     }
 

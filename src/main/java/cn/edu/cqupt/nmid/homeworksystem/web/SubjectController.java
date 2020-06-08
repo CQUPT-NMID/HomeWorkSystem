@@ -24,7 +24,7 @@ import java.util.List;
 
 @RestController
 @Api(tags = "学科相关")
-@RequestMapping("/subject")
+@RequestMapping("/api/subject")
 public class SubjectController {
 
 

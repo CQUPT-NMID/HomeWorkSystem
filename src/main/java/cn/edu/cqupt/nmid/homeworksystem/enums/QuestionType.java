@@ -1,5 +1,6 @@
 package cn.edu.cqupt.nmid.homeworksystem.enums;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import javafx.scene.chart.ValueAxis;
 
@@ -10,6 +11,7 @@ import javafx.scene.chart.ValueAxis;
  * @date 2020/3/13 15:48
  */
 
+@ApiModel("问题的类型")
 public enum  QuestionType {
     //默认
     @ApiModelProperty(value = "默认查询")
@@ -21,6 +23,6 @@ public enum  QuestionType {
     @ApiModelProperty(value = "我的提问")
     MY_QUESTION,
     //我回答过的问题
-    @ApiModelProperty(value = "我提出的问题")
+    @ApiModelProperty(value = "我回答过的问题")
     ANSWER_QUESTION;
 }

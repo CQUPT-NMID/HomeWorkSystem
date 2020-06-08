@@ -3,6 +3,7 @@ package cn.edu.cqupt.nmid.homeworksystem.service;
 import cn.edu.cqupt.nmid.homeworksystem.enums.QuestionType;
 import cn.edu.cqupt.nmid.homeworksystem.po.Answer;
 import cn.edu.cqupt.nmid.homeworksystem.po.Question;
+import cn.edu.cqupt.nmid.homeworksystem.po.Questionhistory;
 import cn.edu.cqupt.nmid.homeworksystem.po.model.AnswerModel;
 import cn.edu.cqupt.nmid.homeworksystem.po.model.QuestionModel;
 import cn.edu.cqupt.nmid.homeworksystem.po.vo.QuestionVo;
@@ -95,4 +96,7 @@ public interface DiscussionService {
      * @return
      */
     List<QuestionVo> getMyHistory(Integer subjectId, Integer id);
+
+
+    Integer addHistory(Questionhistory questionhistory);
 }

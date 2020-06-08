@@ -20,6 +20,9 @@ public class AnswerModel {
     @ApiModelProperty(value = "回答id")
     private Integer id;
 
+    @ApiModelProperty(value = "问题id")
+    private Integer questionId;
+
     @ApiModelProperty(value = "是否是老师")
     private Integer role;
 
@@ -69,4 +72,19 @@ public class AnswerModel {
         this.updateAble = updateAble;
     }
 
+    public Integer getQuestionId() {
+        return questionId;
+    }
+
+    public void setQuestionId(Integer questionId) {
+        this.questionId = questionId;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
 }
